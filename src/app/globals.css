@@ -151,10 +151,6 @@ body {
 
 .homepage-bg {
   background-color: var(--background);
-  background-image: url("/homepage-bg.png");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
 }
 
 .word-cloud-wrapper {

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { asset } from "@/lib/asset";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -94,7 +95,7 @@ export default function HeroSection() {
             {/* Lower layer: torchlight-revealed rest of the word-cloud */}
             <Image
               ref={restImgRef}
-              src="/word-cloud-rest.png"
+              src={asset("/word-cloud-rest.png")}
               alt=""
               aria-hidden
               fill
@@ -105,7 +106,7 @@ export default function HeroSection() {
             />
             {/* Top layer: BLOG text, always visible (same layer as name+brief) */}
             <Image
-              src="/word-cloud-blog.png"
+              src={asset("/word-cloud-blog.png")}
               alt="Decorative word cloud"
               fill
               unoptimized

@@ -55,12 +55,20 @@ jobs:
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        id: pages
         with:
           # Automatically inject basePath in your Next.js configuration file and disable
           # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
           #
           # You may remove this line if you want to manage the configuration yourself.
           static_site_generator: next
+      - name: Expose basePath to client
+        # actions/configure-pages injects basePath into next.config.mjs, but that value
+        # is NOT applied to <Image src> when images.unoptimized=true, nor to raw <img>/CSS.
+        # Forward it as a public env var so asset() can prefix URLs manually.
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: echo "NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH" >> "$GITHUB_ENV"
       - name: Restore cache
         uses: actions/cache@v4
         with:
