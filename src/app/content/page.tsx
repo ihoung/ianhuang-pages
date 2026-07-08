@@ -12,12 +12,6 @@ type Content = {
 
 const entries: Content[] = [
   {
-    slug: "about",
-    title: "About",
-    subtitle: "Designer &amp; developer",
-    file: "about.md",
-  },
-  {
     slug: "neon-dashboard",
     title: "Neon Dashboard",
     subtitle: "Project detail",
@@ -32,7 +26,7 @@ export default function ContentPage({
 }: {
   params: Params;
 }) {
-  const slug = (params?.slug as string | undefined) ?? "about";
+  const slug = (params?.slug as string | undefined) ?? "neon-dashboard";
   const entry =
     entries.find((e) => e.slug === slug) ?? entries[0];
 
@@ -52,7 +46,7 @@ export default function ContentPage({
         <nav className="mb-12 flex flex-wrap gap-2 text-[11px] font-mono uppercase tracking-widest">
           {entries.map((e) => {
             const active = e.slug === entry.slug;
-            const href = e.slug === "about" ? "/content" : `/content/${e.slug}`;
+            const href = `/content/${e.slug}`;
             return (
               <a
                 key={e.slug}

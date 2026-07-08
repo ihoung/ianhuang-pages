@@ -13,19 +13,18 @@ export default function ContactSection() {
       aria-label="Contact"
     >
       <div className="flex-1 flex flex-col items-center justify-center w-full">
-        <h2 className="display-heading">Let&apos;s Create Together</h2>
+        <h2 className="display-heading mb-10 md:mb-14">Contact Me</h2>
 
-        <p className="mt-6 max-w-xl text-base md:text-lg text-white/70">
-          Have a project in mind? I&apos;d love to hear about it. Let&apos;s
-          bring your vision to life.
+        <p className="text-base md:text-lg text-white/70 whitespace-nowrap">
+          Any ideas or questions? I&apos;d love to hear about it. Don&apos;t hesitate to reach out.
         </p>
 
         <a
-          href="mailto:hello@example.com"
+          href="mailto:ianhuang32@outlook.com"
           className="mt-10 inline-flex items-center gap-3 text-lg md:text-xl font-medium hover:text-accent transition-colors"
         >
           <span aria-hidden className="text-accent">✉</span>
-          hello@example.com
+          ianhuang32@outlook.com
         </a>
 
         <ul className="mt-12 flex items-center justify-center gap-6">

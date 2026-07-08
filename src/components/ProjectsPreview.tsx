@@ -1,8 +1,15 @@
+import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
 import { getFeaturedProjects } from "@/lib/projects";
 
 export default function ProjectsPreview() {
-  const featured = getFeaturedProjects(2);
+  const featured = getFeaturedProjects(3);
+  const lgColClass =
+    featured.length >= 3
+      ? "lg:grid-cols-3"
+      : featured.length === 2
+        ? "lg:grid-cols-2"
+        : "lg:grid-cols-1";
 
   return (
     <section
@@ -12,7 +19,9 @@ export default function ProjectsPreview() {
     >
       <h2 className="section-heading mb-10 md:mb-14">Featured Projects</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 ${lgColClass} gap-6 md:gap-8 max-w-3xl`}
+      >
         {featured.map((project) => (
           <ProjectCard
             key={project.slug}
@@ -22,6 +31,17 @@ export default function ProjectsPreview() {
             aspect="aspect-[16/10]"
           />
         ))}
+      </div>
+
+      <div className="mt-10 md:mt-12 flex justify-center">
+        <Link
+          href="/gallery"
+          className="btn btn-outline"
+          aria-label="View all projects"
+        >
+          View All
+          <span aria-hidden>→</span>
+        </Link>
       </div>
     </section>
   );

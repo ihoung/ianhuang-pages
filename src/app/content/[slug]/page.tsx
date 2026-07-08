@@ -12,12 +12,6 @@ type Content = {
 
 const entries: Content[] = [
   {
-    slug: "about",
-    title: "About",
-    subtitle: "Designer &amp; developer",
-    file: "about.md",
-  },
-  {
     slug: "neon-dashboard",
     title: "Neon Dashboard",
     subtitle: "Project detail",
@@ -26,9 +20,7 @@ const entries: Content[] = [
 ];
 
 export function generateStaticParams() {
-  return entries
-    .filter((e) => e.slug !== "about")
-    .map((e) => ({ slug: e.slug }));
+  return entries.map((e) => ({ slug: e.slug }));
 }
 
 type Params = { slug: string };
@@ -60,8 +52,7 @@ export default function ProjectDetailPage({
         <nav className="mb-12 flex flex-wrap gap-2 text-[11px] font-mono uppercase tracking-widest">
           {entries.map((e) => {
             const active = e.slug === entry.slug;
-            const href =
-              e.slug === "about" ? "/content" : `/content/${e.slug}`;
+            const href = `/content/${e.slug}`;
             return (
               <a
                 key={e.slug}

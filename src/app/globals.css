@@ -109,10 +109,12 @@ body {
   }
 
   .display-heading {
-    font-size: clamp(2.35rem, 5.7vw, 6.75rem);
+    font-size: clamp(2rem, 4.5vw, 4.5rem);
     font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 
   .project-card {
@@ -149,7 +151,7 @@ body {
   background-position: center center;
 }
 
-.homepage-bg {
+.page-bg {
   background-color: var(--background);
 }
 

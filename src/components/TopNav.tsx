@@ -8,7 +8,6 @@ type Item = { href: string; label: string };
 const items: Item[] = [
   { href: "/", label: "Home" },
   { href: "/gallery", label: "Works" },
-  { href: "/content", label: "About" },
   { href: "/#contact", label: "Contact" },
 ];
 
@@ -71,8 +70,7 @@ export default function TopNav({ active = "/" }: Props) {
             {items.map((item) => {
               const isActive =
                 (item.href === "/" && active === "/") ||
-                (item.href === "/gallery" && active === "/gallery") ||
-                (item.href === "/content" && active === "/content");
+                (item.href === "/gallery" && active === "/gallery");
               return (
                 <li key={item.href}>
                   <Link

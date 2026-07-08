@@ -1,27 +1,13 @@
-import Image from "next/image";
 import RevealSection from "@/components/RevealSection";
 import HeroSection from "@/components/HeroSection";
 import ProjectsPreview from "@/components/ProjectsPreview";
 import ContactSection from "@/components/ContactSection";
 import SideNav from "@/components/SideNav";
 import { LangToggle } from "@/components/TopNav";
-import { asset } from "@/lib/asset";
 
 export default function Home() {
   return (
     <>
-      {/* Static background — uses next/image so basePath is auto-applied in GH Pages */}
-      <div aria-hidden className="fixed inset-0 z-0 homepage-bg">
-        <Image
-          src={asset("/homepage-bg.png")}
-          alt=""
-          fill
-          unoptimized
-          priority
-          className="object-cover"
-        />
-      </div>
-
       <SideNav />
 
       <div className="fixed top-6 right-6 z-50">

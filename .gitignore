@@ -40,3 +40,6 @@ AGENTS.md
 
 # temporary directory
 /temp/
+
+# content directory, downloaded files
+/content/
