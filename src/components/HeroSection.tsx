@@ -65,17 +65,31 @@ export default function HeroSection() {
       <div className="relative z-10 hero-container min-h-screen flex flex-col lg:flex-row items-center justify-center pt-28 md:pt-36 lg:pt-44 pb-16 md:pb-24 lg:gap-x-2 xl:gap-x-4 2xl:gap-x-6">
         <div className="flex flex-col items-start justify-center order-1 lg:order-1 lg:max-w-[560px] xl:max-w-[680px] 2xl:max-w-[780px]">
           <div className="flex items-baseline w-full">
-            <h1 className="display-heading whitespace-nowrap">
+            <h1
+              className="display-heading whitespace-nowrap text-8xl md:text-10xl opacity-0 animate-fade-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               Ian Huang
             </h1>
-            <div className="possessive-s">&apos;s</div>
+            <div
+              className="possessive-s opacity-0 animate-fade-up"
+              style={{ animationDelay: "0.2s" }}
+            >
+              &apos;s
+            </div>
           </div>
 
-          <p className="mt-4 md:mt-6 max-w-xl text-base md:text-lg text-white/60 leading-relaxed">
+          <p
+            className="mt-4 md:mt-6 max-w-xl text-base md:text-lg text-white/60 leading-relaxed opacity-0 animate-fade-up"
+            style={{ animationDelay: "0.35s" }}
+          >
             Animation &amp; Game <br className="hidden sm:block" /> Pipeline Technical Director, Programmer &amp; Technical Animator
           </p>
 
-          <div className="mt-8 md:mt-10 flex flex-col xs:flex-row items-start gap-4">
+          <div
+            className="mt-8 md:mt-10 flex flex-col xs:flex-row items-start gap-4 opacity-0 animate-fade-up"
+            style={{ animationDelay: "0.55s" }}
+          >
             <Link href="/gallery" className="btn btn-primary">
               View My Work
               <span aria-hidden>→</span>
@@ -85,7 +99,10 @@ export default function HeroSection() {
             </a>
           </div>
 
-          <div className="mt-12 md:mt-20 font-mono text-[11px] tracking-widest uppercase text-white/30">
+          <div
+            className="mt-12 md:mt-20 font-mono text-[11px] tracking-widest uppercase text-white/30 opacity-0 animate-fade-up"
+            style={{ animationDelay: "0.75s" }}
+          >
             Scroll to explore
           </div>
         </div>
