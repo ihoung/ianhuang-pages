@@ -43,3 +43,6 @@ AGENTS.md
 
 # content directory, downloaded files
 /content/
+
+# generated public copies of downloaded content thumbnails
+/public/content/

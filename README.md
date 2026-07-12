@@ -34,3 +34,38 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Private project content
+
+Project metadata and project Markdown are intentionally not committed. In GitHub Actions they are downloaded from Google Drive before the static build. Configure these repository secrets:
+
+- `GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON`: the complete JSON credential for a Google service account.
+- `GOOGLE_DRIVE_CONTENT_FOLDER_ID`: the ID of the Drive folder that contains `index.yml`.
+
+Share that Drive folder with the service account email as a Viewer. Its structure must be:
+
+```text
+content/
+������ index.yml
+������ content/
+��   ������ <file>_en.md
+��   ������ <file>_cn.md
+������ <thumbnail-relative-path>
+```
+
+`index.yml` has a `projects` array. Each project requires `slug`, `title`, `description`, `thumbnail`, and extensionless `file`; `title` and `description` can be a common string or `{ en, cn }`. `featured` defaults to `false`, and optional comma-separated `tags` are retained for search data.
+
+```yml
+projects:
+  - slug: neon-dashboard
+    title:
+      en: Neon Dashboard
+      cn: �޺��Ǳ���
+    description: A real-time analytics dashboard.
+    thumbnail: images/neon-dashboard.jpg
+    file: neon-dashboard
+    featured: true
+    tags: Web App, Data Viz
+```
+
+Place local content in the ignored `content/` directory before running `npm run dev` or `npm run build`. A project needs at least one of `content/<file>_en.md` and `content/<file>_cn.md`; the other locale falls back to the available Markdown file.
