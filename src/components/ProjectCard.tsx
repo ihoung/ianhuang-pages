@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
 
 type Props = {
   title: string;
@@ -13,6 +16,9 @@ export default function ProjectCard({
   href,
   aspect = "aspect-[4/3]",
 }: Props) {
+  const { locale } = useLocale();
+  const openLabel = locale === "cn" ? "打开 →" : "Open →";
+
   return (
     <Link
       href={href}
@@ -33,7 +39,7 @@ export default function ProjectCard({
           aria-hidden
         >
           <span className="font-mono text-[10px] tracking-widest uppercase text-white/60 group-hover:text-white/90 transition-colors">
-            Open →
+            {openLabel}
           </span>
         </div>
       </div>

@@ -3,11 +3,21 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
 import { asset } from "@/lib/asset";
 
 export default function HeroSection() {
+  const { locale } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const restImgRef = useRef<HTMLImageElement>(null);
+
+  const roleText =
+    locale === "cn"
+      ? "动画与游戏Pipeline TD，游戏开发者，技术动画师"
+      : "Animation &amp; Game Pipeline Technical Director, Programmer &amp; Technical Animator";
+  const ctaWork = locale === "cn" ? "查看作品" : "View My Work";
+  const ctaContact = locale === "cn" ? "联系我" : "Get in Touch";
+  const scrollHint = locale === "cn" ? "向下滚动探索" : "Scroll to explore";
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -21,7 +31,6 @@ export default function HeroSection() {
     const apply = () => {
       rafId = 0;
       const rect = restImg.getBoundingClientRect();
-      // Skip if the wrapper has no layout yet.
       if (rect.width === 0 || rect.height === 0) return;
       const mx = ((pendingX - rect.left) / rect.width) * 100;
       const my = ((pendingY - rect.top) / rect.height) * 100;
@@ -66,16 +75,16 @@ export default function HeroSection() {
         <div className="flex flex-col items-start justify-center order-1 lg:order-1 lg:max-w-[560px] xl:max-w-[680px] 2xl:max-w-[780px]">
           <div className="flex items-baseline w-full">
             <h1
-              className="display-heading whitespace-nowrap text-8xl md:text-10xl opacity-0 animate-fade-up"
+              className="display-heading whitespace-nowrap text-10xl md:text-8xl opacity-0 animate-fade-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Ian Huang
+              黄诣洋
             </h1>
             <div
-              className="possessive-s opacity-0 animate-fade-up"
+              className="possessive-s opacity-0 text-7xl md:text-6xl animate-fade-up"
               style={{ animationDelay: "0.2s" }}
             >
-              &apos;s
+              的
             </div>
           </div>
 
@@ -83,19 +92,19 @@ export default function HeroSection() {
             className="mt-4 md:mt-6 max-w-xl text-base md:text-lg text-white/60 leading-relaxed opacity-0 animate-fade-up"
             style={{ animationDelay: "0.35s" }}
           >
-            Animation &amp; Game <br className="hidden sm:block" /> Pipeline Technical Director, Programmer &amp; Technical Animator
+            {roleText}
           </p>
 
           <div
             className="mt-8 md:mt-10 flex flex-col xs:flex-row items-start gap-4 opacity-0 animate-fade-up"
             style={{ animationDelay: "0.55s" }}
           >
-            <Link href="/gallery" className="btn btn-primary">
-              View My Work
+            <Link href={`/${locale}/gallery`} className="btn btn-primary">
+              {ctaWork}
               <span aria-hidden>→</span>
             </Link>
-            <a href="/#contact" className="btn btn-outline">
-              Get in Touch
+            <a href={`/${locale}/#contact`} className="btn btn-outline">
+              {ctaContact}
             </a>
           </div>
 
@@ -103,13 +112,12 @@ export default function HeroSection() {
             className="mt-12 md:mt-20 font-mono text-[11px] tracking-widest uppercase text-white/30 opacity-0 animate-fade-up"
             style={{ animationDelay: "0.75s" }}
           >
-            Scroll to explore
+            {scrollHint}
           </div>
         </div>
 
         <div className="flex items-center justify-center lg:justify-start order-2 lg:order-2">
           <div className="word-cloud-wrapper word-cloud-align relative">
-            {/* Lower layer: torchlight-revealed rest of the word-cloud */}
             <Image
               ref={restImgRef}
               src={asset("/word-cloud-rest.png")}
@@ -121,7 +129,6 @@ export default function HeroSection() {
               className="object-contain word-cloud-glow word-cloud-rest z-0"
               priority
             />
-            {/* Top layer: BLOG text, always visible (same layer as name+brief) */}
             <Image
               src={asset("/word-cloud-blog.png")}
               alt="Decorative word cloud"

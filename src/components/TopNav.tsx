@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useLocale } from "@/lib/i18n";
 
 type Item = { href: string; label: string };
 
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function LangToggle() {
-  const [lang, setLang] = useState<"EN" | "中">("EN");
+  const { locale, setLocale } = useLocale();
 
   return (
     <div
@@ -26,26 +26,26 @@ export function LangToggle() {
     >
       <button
         type="button"
-        onClick={() => setLang("中")}
+        onClick={() => setLocale("cn")}
         className={`px-2.5 py-1.5 rounded-l-full transition-colors ${
-          lang === "中"
+          locale === "cn"
             ? "text-white"
             : "text-white/40 hover:text-white/70"
         }`}
-        aria-pressed={lang === "中"}
+        aria-pressed={locale === "cn"}
       >
         中
       </button>
       <span aria-hidden className="w-px h-3.5 bg-white/10" />
       <button
         type="button"
-        onClick={() => setLang("EN")}
+        onClick={() => setLocale("en")}
         className={`px-2.5 py-1.5 rounded-r-full transition-colors ${
-          lang === "EN"
+          locale === "en"
             ? "text-white"
             : "text-white/40 hover:text-white/70"
         }`}
-        aria-pressed={lang === "EN"}
+        aria-pressed={locale === "en"}
       >
         EN
       </button>
@@ -54,11 +54,27 @@ export function LangToggle() {
 }
 
 export default function TopNav({ active = "/" }: Props) {
+  const { locale } = useLocale();
+
+  const localizedItems: Item[] =
+    locale === "cn"
+      ? [
+          { href: "/", label: "首页" },
+          { href: "/gallery", label: "作品" },
+          { href: "/#contact", label: "联系" },
+        ]
+      : items;
+
+  const localizedActive =
+    locale === "cn"
+      ? (active === "/" ? "/" : active.startsWith("/gallery") ? "/gallery" : "/#contact")
+      : active;
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-black/50 border-b border-white/5">
       <div className="site-container flex items-center justify-between h-16">
         <Link
-          href="/"
+          href={`/${locale}/`}
           className="font-mono tracking-widest text-sm font-semibold"
           aria-label="Home"
         >
@@ -67,14 +83,14 @@ export default function TopNav({ active = "/" }: Props) {
 
         <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-8">
-            {items.map((item) => {
+            {localizedItems.map((item) => {
               const isActive =
-                (item.href === "/" && active === "/") ||
-                (item.href === "/gallery" && active === "/gallery");
+                (item.href === "/" && localizedActive === "/") ||
+                (item.href === "/gallery" && localizedActive === "/gallery");
               return (
                 <li key={item.href}>
                   <Link
-                    href={item.href}
+                    href={`/${locale}${item.href}`}
                     className={`nav-link ${
                       isActive ? "nav-link-active" : ""
                     }`}

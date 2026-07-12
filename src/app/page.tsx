@@ -1,28 +1,13 @@
-import RevealSection from "@/components/RevealSection";
-import HeroSection from "@/components/HeroSection";
-import ProjectsPreview from "@/components/ProjectsPreview";
-import ContactSection from "@/components/ContactSection";
-import SideNav from "@/components/SideNav";
-import { LangToggle } from "@/components/TopNav";
+"use client";
 
-export default function Home() {
-  return (
-    <>
-      <SideNav />
+import { useEffect } from "react";
 
-      <div className="fixed top-6 right-6 z-50">
-        <LangToggle />
-      </div>
+export default function RootPage() {
+  useEffect(() => {
+    const stored = localStorage.getItem("preferred_locale");
+    const target = stored === "en" ? "/en" : "/cn";
+    window.location.replace(target);
+  }, []);
 
-      <main className="relative z-10">
-        <HeroSection />
-        <RevealSection>
-          <ProjectsPreview />
-        </RevealSection>
-        <RevealSection>
-          <ContactSection />
-        </RevealSection>
-      </main>
-    </>
-  );
+  return null;
 }

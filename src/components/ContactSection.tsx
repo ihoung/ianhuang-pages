@@ -1,4 +1,16 @@
+"use client";
+
+import { useLocale } from "@/lib/i18n";
+
 export default function ContactSection() {
+  const { locale } = useLocale();
+
+  const heading = locale === "cn" ? "联系我" : "Contact Me";
+  const bodyText =
+    locale === "cn"
+      ? "有任何想法或问题？欢迎联系我。"
+      : "Any ideas or questions? I&apos;d love to hear about it. Don&apos;t hesitate to reach out.";
+  const footerText = locale === "cn" ? "基于 Next.js 构建" : "Built with Next.js";
   const socials = [
     { label: "in", href: "#", full: "LinkedIn" },
     { label: "X", href: "#", full: "X / Twitter" },
@@ -13,10 +25,10 @@ export default function ContactSection() {
       aria-label="Contact"
     >
       <div className="flex-1 flex flex-col items-center justify-center w-full">
-        <h2 className="display-heading mb-10 md:mb-14">Contact Me</h2>
+        <h2 className="display-heading mb-10 md:mb-14">{heading}</h2>
 
         <p className="text-base md:text-lg text-white/70 whitespace-nowrap">
-          Any ideas or questions? I&apos;d love to hear about it. Don&apos;t hesitate to reach out.
+          {bodyText}
         </p>
 
         <a
@@ -44,7 +56,7 @@ export default function ContactSection() {
 
       <footer className="w-full mt-16 pt-8 border-t border-white/5 text-[11px] font-mono uppercase tracking-widest text-white/40 flex items-center justify-between">
         <span>© {new Date().getFullYear()} Ian Huang</span>
-        <span>Built with Next.js</span>
+        <span>{footerText}</span>
       </footer>
     </section>
   );

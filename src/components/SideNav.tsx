@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale } from "@/lib/i18n";
 
 type Item = { id: string; label: string };
 
@@ -11,7 +12,17 @@ const items: Item[] = [
 ];
 
 export default function SideNav() {
+  const { locale } = useLocale();
   const [active, setActive] = useState("home");
+
+  const localizedItems: Item[] =
+    locale === "cn"
+      ? [
+          { id: "home", label: "首页" },
+          { id: "projects", label: "作品" },
+          { id: "contact", label: "联系" },
+        ]
+      : items;
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -44,7 +55,7 @@ export default function SideNav() {
       className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-end gap-6"
     >
       <ul className="flex flex-col items-end gap-6">
-        {items.map((item) => {
+        {localizedItems.map((item) => {
           const isActive = active === item.id;
           return (
             <li key={item.id} className="flex items-center gap-3">
