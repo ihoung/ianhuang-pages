@@ -59,10 +59,10 @@ export function getFeaturedProjects(locale: Locale, limit = 3): Project[] { retu
 export function getProjectBySlug(locale: Locale, slug: string): Project | undefined { return getAllProjects(locale).find((project) => project.slug === slug); }
 export function getFirstProject(locale: Locale): Project { const project = getAllProjects(locale)[0]; if (!project) fail("projects must contain at least one project."); return project; }
 export function getProjectMarkdown(project: Project, locale: Locale): { source: string; filePath: string } {
-  const preferred = contentPath(`content/${project.file}_${locale}.md`, `content for ${project.slug}`);
+  const preferred = contentPath(`${project.file}_${locale}.md`, `content for ${project.slug}`);
   const fallbackLocale: Locale = locale === "en" ? "cn" : "en";
-  const fallback = contentPath(`content/${project.file}_${fallbackLocale}.md`, `fallback content for ${project.slug}`);
+  const fallback = contentPath(`${project.file}_${fallbackLocale}.md`, `fallback content for ${project.slug}`);
   const source = existsSync(preferred) ? preferred : existsSync(fallback) ? fallback : null;
-  if (!source) throw new Error(`Missing markdown for ${project.slug}. Expected ${project.file}_${locale}.md or ${project.file}_${fallbackLocale}.md in content/content/.`);
+  if (!source) throw new Error(`Missing markdown for ${project.slug}. Expected ${project.file}_${locale}.md or ${project.file}_${fallbackLocale}.md in content/.`);
   return { source: readFileSync(source, "utf8"), filePath: source };
 }

@@ -36,8 +36,8 @@ export function loadAndValidateProjects() {
     if (typeof project.file !== "string" || !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(project.file)) fail(`${label}.file must be a filename base without an extension.`);
     if (project.featured !== undefined && typeof project.featured !== "boolean") fail(`${label}.featured must be a boolean when present.`);
     if (project.tags !== undefined && typeof project.tags !== "string") fail(`${label}.tags must be a comma-separated string when present.`);
-    const en = safeContentPath(`content/${project.file}_en.md`, `${label} English markdown`);
-    const cn = safeContentPath(`content/${project.file}_cn.md`, `${label} Chinese markdown`);
+    const en = safeContentPath(`${project.file}_en.md`, `${label} English markdown`);
+    const cn = safeContentPath(`${project.file}_cn.md`, `${label} Chinese markdown`);
     if (!existsSync(en) && !existsSync(cn)) fail(`${label} needs at least one of content/${project.file}_en.md or content/${project.file}_cn.md.`);
     return project;
   });
@@ -65,7 +65,7 @@ function isExternalVideoUrl(url) {
 export function preparePublicVideos(projects) {
   for (const project of projects) {
     for (const locale of ["en", "cn"]) {
-      const mdPath = safeContentPath(`content/${project.file}_${locale}.md`, `${project.slug} ${locale} markdown`);
+      const mdPath = safeContentPath(`${project.file}_${locale}.md`, `${project.slug} ${locale} markdown`);
       if (!existsSync(mdPath)) continue;
       const source = readFileSync(mdPath, "utf8");
       VIDEO_REFERENCE.lastIndex = 0;
