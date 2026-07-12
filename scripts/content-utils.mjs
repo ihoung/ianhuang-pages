@@ -1,5 +1,5 @@
-﻿import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
-import { dirname, resolve, sep } from "node:path";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { dirname, relative, resolve, sep } from "node:path";
 import { parseDocument } from "yaml";
 
 export const contentRoot = resolve(process.cwd(), "content");
@@ -51,5 +51,44 @@ export function preparePublicThumbnails(projects) {
     if (!destination.startsWith(`${publicContentRoot}${sep}`)) fail(`thumbnail for ${project.slug} escapes public/content.`);
     mkdirSync(dirname(destination), { recursive: true });
     cpSync(source, destination);
+  }
+}
+
+const VIDEO_REFERENCE = /!video\[([^\]]*)\]\(([^)]+)\)/g;
+function isExternalVideoUrl(url) {
+  return /youtube\.com|youtu\.be|bilibili\.com/.test(url);
+}
+
+/** Scan project markdown files for !video[...](local-path) references and copy
+ *  the referenced local video files into public/content/ so they can be served
+ *  as static assets. YouTube/Bilibili URLs are skipped (they are embedded via iframe). */
+export function preparePublicVideos(projects) {
+  for (const project of projects) {
+    for (const locale of ["en", "cn"]) {
+      const mdPath = safeContentPath(`content/${project.file}_${locale}.md`, `${project.slug} ${locale} markdown`);
+      if (!existsSync(mdPath)) continue;
+      const source = readFileSync(mdPath, "utf8");
+      VIDEO_REFERENCE.lastIndex = 0;
+      let match;
+      while ((match = VIDEO_REFERENCE.exec(source)) !== null) {
+        const url = match[2].trim();
+        if (isExternalVideoUrl(url)) continue;
+        const mdDir = dirname(mdPath);
+        const videoSource = resolve(mdDir, url);
+        if (!videoSource.startsWith(`${contentRoot}${sep}`)) {
+          fail(`video path escapes content directory: ${url} in ${project.file}_${locale}.md`);
+        }
+        if (!existsSync(videoSource) || !statSync(videoSource).isFile()) {
+          fail(`video file not found: ${url} referenced in ${project.file}_${locale}.md`);
+        }
+        const rel = relative(contentRoot, videoSource);
+        const dest = resolve(publicContentRoot, rel);
+        if (!dest.startsWith(`${publicContentRoot}${sep}`)) {
+          fail(`video destination escapes public/content: ${url}`);
+        }
+        mkdirSync(dirname(dest), { recursive: true });
+        cpSync(videoSource, dest);
+      }
+    }
   }
 }

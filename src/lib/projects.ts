@@ -58,11 +58,11 @@ export function getAllProjects(locale: Locale): Project[] { return readIndex().m
 export function getFeaturedProjects(locale: Locale, limit = 3): Project[] { return getAllProjects(locale).filter((project) => project.featured).slice(0, limit); }
 export function getProjectBySlug(locale: Locale, slug: string): Project | undefined { return getAllProjects(locale).find((project) => project.slug === slug); }
 export function getFirstProject(locale: Locale): Project { const project = getAllProjects(locale)[0]; if (!project) fail("projects must contain at least one project."); return project; }
-export function getProjectMarkdown(project: Project, locale: Locale): string {
+export function getProjectMarkdown(project: Project, locale: Locale): { source: string; filePath: string } {
   const preferred = contentPath(`content/${project.file}_${locale}.md`, `content for ${project.slug}`);
   const fallbackLocale: Locale = locale === "en" ? "cn" : "en";
   const fallback = contentPath(`content/${project.file}_${fallbackLocale}.md`, `fallback content for ${project.slug}`);
   const source = existsSync(preferred) ? preferred : existsSync(fallback) ? fallback : null;
   if (!source) throw new Error(`Missing markdown for ${project.slug}. Expected ${project.file}_${locale}.md or ${project.file}_${fallbackLocale}.md in content/content/.`);
-  return readFileSync(source, "utf8");
+  return { source: readFileSync(source, "utf8"), filePath: source };
 }
