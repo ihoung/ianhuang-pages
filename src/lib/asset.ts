@@ -7,3 +7,9 @@ export function asset(path: string): string {
   if (!path.startsWith("/")) return path;
   return `${basePath}${path}`;
 }
+
+/** Build a URL path that includes the basePath prefix for GitHub Pages.
+ *  e.g. pathWithBase("/en") → "/ianhuang-pages/en" on GH Pages, "/en" in dev. */
+export function pathWithBase(path: string): string {
+  return asset(path);
+}

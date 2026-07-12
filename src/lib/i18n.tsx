@@ -14,8 +14,12 @@ const LocaleContext = createContext<LocaleContextType>({
   setLocale: () => {},
 });
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 function getLocaleFromUrl(): Locale {
-  const segments = window.location.pathname.split("/").filter(Boolean);
+  const pathname = window.location.pathname;
+  const path = BASE_PATH ? pathname.slice(BASE_PATH.length) : pathname;
+  const segments = path.split("/").filter(Boolean);
   if (segments.length > 0 && (segments[0] === "en" || segments[0] === "cn")) {
     return segments[0] as Locale;
   }
@@ -46,14 +50,15 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.lang = newLocale === "cn" ? "zh-CN" : "en";
       localStorage.setItem("preferred_locale", newLocale);
       const currentPath = window.location.pathname;
-      const segments = currentPath.split("/").filter(Boolean);
+      const path = BASE_PATH ? currentPath.slice(BASE_PATH.length) : currentPath;
+      const segments = path.split("/").filter(Boolean);
       let newPath: string;
       if (segments.length > 0 && (segments[0] === "en" || segments[0] === "cn")) {
-        newPath = "/" + newLocale + currentPath.substring(segments[0].length + 1);
+        newPath = "/" + newLocale + path.substring(segments[0].length + 1);
       } else {
-        newPath = "/" + newLocale + currentPath;
+        newPath = "/" + newLocale + path;
       }
-      window.history.replaceState(null, "", newPath);
+      window.history.replaceState(null, "", BASE_PATH + newPath);
     }
   }, []);
 
