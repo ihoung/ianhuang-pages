@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 type Locale = "en" | "cn";
 
@@ -34,12 +35,13 @@ function getLocaleFromStorage(): Locale | null {
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [locale, setLocaleState] = useState<Locale>("en");
 
   useEffect(() => {
     const urlLocale = getLocaleFromUrl();
     const storageLocale = getLocaleFromStorage();
-    const initialLocale = urlLocale !== "en" ? urlLocale : storageLocale || "en";
+    const initialLocale = urlLocale === "cn" || urlLocale === "en" ? urlLocale : (storageLocale || "en");
     setLocaleState(initialLocale);
     document.documentElement.lang = initialLocale === "cn" ? "zh-CN" : "en";
   }, []);
@@ -58,9 +60,14 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       } else {
         newPath = "/" + newLocale + path;
       }
-      window.history.replaceState(null, "", BASE_PATH + newPath);
+      const currentLocale = segments.length > 0 && (segments[0] === "en" || segments[0] === "cn")
+        ? (segments[0] as Locale)
+        : null;
+      if (currentLocale !== newLocale) {
+        router.push(newPath);
+      }
     }
-  }, []);
+  }, [router]);
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>

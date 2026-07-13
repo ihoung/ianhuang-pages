@@ -37,6 +37,37 @@ export type RenderMarkdownOptions = {
   markdownFilePath?: string;
 };
 
+export type Heading = {
+  level: number;
+  text: string;
+  id: string;
+};
+
+export type RenderResult = {
+  html: string;
+  headings: Heading[];
+};
+
+/** Convert heading text to a URL-safe anchor id (preserves CJK characters). */
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\u4e00-\u9fff\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+/** Strip inline markdown formatting to get plain text for TOC display. */
+function stripInline(text: string): string {
+  return text
+    .replace(/!video\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+}
+
 /** Extract the 11-char YouTube video id from any common YouTube URL shape. */
 function extractYouTubeId(url: string): string | null {
   const patterns = [
@@ -121,9 +152,11 @@ function renderInline(text: string, options: RenderMarkdownOptions): string {
   return out;
 }
 
-export function renderMarkdown(source: string, options: RenderMarkdownOptions = {}): string {
+export function renderMarkdown(source: string, options: RenderMarkdownOptions = {}): RenderResult {
   const lines = source.replace(/\r\n?/g, "\n").split("\n");
   const html: string[] = [];
+  const headings: Heading[] = [];
+  const usedIds = new Map<string, number>();
 
   let i = 0;
   let inQuote = false;
@@ -177,7 +210,18 @@ export function renderMarkdown(source: string, options: RenderMarkdownOptions = 
       closeLists();
       closeQuote();
       const level = heading[1].length;
-      html.push(`<h${level}>${renderInline(heading[2], options)}</h${level}>`);
+      const plainText = stripInline(heading[2]);
+      let id = slugify(plainText) || `heading-${headings.length}`;
+      // Ensure unique id
+      if (usedIds.has(id)) {
+        const count = usedIds.get(id)! + 1;
+        usedIds.set(id, count);
+        id = `${id}-${count}`;
+      } else {
+        usedIds.set(id, 0);
+      }
+      headings.push({ level, text: plainText, id });
+      html.push(`<h${level} id="${id}">${renderInline(heading[2], options)}</h${level}>`);
       i++;
       continue;
     }
@@ -250,5 +294,5 @@ export function renderMarkdown(source: string, options: RenderMarkdownOptions = 
   closeLists();
   closeQuote();
 
-  return html.join("\n");
+  return { html: html.join("\n"), headings };
 }
