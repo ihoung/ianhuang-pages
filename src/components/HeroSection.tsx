@@ -11,6 +11,8 @@ export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const restImgRef = useRef<HTMLImageElement>(null);
 
+  const myName = locale === "cn" ? "黄诣洋" : "Ian Huang";
+  const clitic = locale === "cn" ? "的" : "'s";
   const roleText =
     locale === "cn"
       ? "动画与游戏Pipeline TD，游戏开发者，技术动画师"
@@ -78,13 +80,13 @@ export default function HeroSection() {
               className="display-heading whitespace-nowrap text-10xl md:text-8xl opacity-0 animate-fade-up"
               style={{ animationDelay: "0.1s" }}
             >
-              黄诣洋
+              {myName}
             </h1>
             <div
               className="possessive-s opacity-0 text-7xl md:text-6xl animate-fade-up"
               style={{ animationDelay: "0.2s" }}
             >
-              的
+              {clitic}
             </div>
           </div>
 
