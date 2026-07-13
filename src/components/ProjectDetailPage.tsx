@@ -7,8 +7,11 @@ import { getAllProjects, getProjectMarkdown, type Locale } from "@/lib/projects"
 type Props = { locale: Locale; slug: string };
 export default function ProjectDetailPage({ locale, slug }: Props) {
   const projects = getAllProjects(locale);
-  const project = projects.find((item) => item.slug === slug) ?? projects[0];
+  const currentIndex = projects.findIndex((item) => item.slug === slug);
+  const project = currentIndex >= 0 ? projects[currentIndex] : projects[0];
   if (!project) throw new Error("No projects are available in content/index.yml.");
+  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
+  const nextProject = currentIndex >= 0 && currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
   const { source, filePath } = getProjectMarkdown(project, locale);
   const { html, headings } = renderMarkdown(source, { markdownFilePath: filePath });
   return (
@@ -19,16 +22,26 @@ export default function ProjectDetailPage({ locale, slug }: Props) {
           <h1 className="display-heading">{project.title}</h1>
           <p className="mt-4 text-white/60 leading-relaxed">{project.description}</p>
         </header>
-        <nav className="mb-12 flex flex-wrap gap-2 text-[11px] font-mono uppercase tracking-widest">
-          {projects.map((item) => (
+        <nav className="mb-12 flex items-center justify-between gap-4 text-[11px] font-mono uppercase tracking-widest">
+          {prevProject ? (
             <Link
-              key={item.slug}
-              href={`/${locale}/content/${item.slug}`}
-              className={`px-3 py-2 rounded-full border transition-colors ${item.slug === project.slug ? "border-accent text-foreground" : "border-white/10 text-white/50 hover:text-white hover:border-white/25"}`}
+              href={`/${locale}/content/${prevProject.slug}`}
+              className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition-colors"
             >
-              {item.title}
+              <span aria-hidden>←</span>
+              <span className="truncate max-w-[40vw]">{prevProject.title}</span>
             </Link>
-          ))}
+          ) : <span className="px-3 py-2 opacity-0" aria-hidden>←</span>}
+          <span className="px-3 py-2 text-white/40">{currentIndex + 1} / {projects.length}</span>
+          {nextProject ? (
+            <Link
+              href={`/${locale}/content/${nextProject.slug}`}
+              className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition-colors"
+            >
+              <span className="truncate max-w-[40vw] text-right">{nextProject.title}</span>
+              <span aria-hidden>→</span>
+            </Link>
+          ) : <span className="px-3 py-2 opacity-0" aria-hidden>→</span>}
         </nav>
         <div className="project-content-layout">
           <TableOfContents headings={headings} />
