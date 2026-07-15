@@ -1,9 +1,15 @@
 /**
  * A tiny, dependency-free markdown renderer for static content pages.
- * Supports: headings (h1-h3), paragraphs, bold/italic, links,
+ * Supports: headings (h1-h3), paragraphs, bold/italic, links, images,
  * blockquotes, inline code, unordered/ordered lists, hr, and
  * simple HTML entities. Not a full CommonMark implementation — just
  * enough for portfolio writing.
+ *
+ * Images: ![alt](url)
+ *   - Absolute http(s) / data URIs are used as-is.
+ *   - Local relative paths are resolved against the markdown file
+ *     (e.g. ![logo](../images/foo.png)) and served from
+ *     /content/<relative-path> (basePath applied automatically).
  *
  * Video syntax: !video[caption](url)
  *   - Local mp4 (path relative to the markdown file):
@@ -13,9 +19,10 @@
  *   - Bilibili (bilibili.com/video/BVxxxx URLs):
  *       !video[演示视频](https://www.bilibili.com/video/BV1xx411c7mD)
  *
- * Local video files are resolved against the markdown file location
- * and must live inside the content/ directory; they are served from
- * /content/<relative-path> (with basePath applied automatically).
+ * Local media files (images and videos) are resolved against the
+ * markdown file location and must live inside the content/ directory;
+ * they are served from /content/<relative-path> (with basePath applied
+ * automatically).
  */
 
 import { resolve, relative, sep } from "node:path";
@@ -62,6 +69,7 @@ function slugify(text: string): string {
 function stripInline(text: string): string {
   return text
     .replace(/!video\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\*([^*]+)\*/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
@@ -121,12 +129,43 @@ function renderVideo(url: string, caption: string, options: RenderMarkdownOption
   return `<figure class="video-embed"><div class="video-frame"><video controls preload="metadata" title="${safeCaption}"><source src="${publicUrl}" type="video/mp4" />${safeCaption || "Your browser does not support the video tag."}</video></div>${captionHtml}</figure>`;
 }
 
+/** Build the HTML for an image. Local relative paths are resolved against
+ *  the markdown file (same rule as local videos) and mapped to /content/<rel>. */
+function renderImage(url: string, alt: string, options: RenderMarkdownOptions): string {
+  const safeAlt = escapeHtml(alt);
+
+  // Absolute URLs (http/https) and data URIs are used as-is.
+  if (/^(https?:|data:)/i.test(url)) {
+    return `<img src="${url}" alt="${safeAlt}" />`;
+  }
+
+  // Local file — resolve relative to the markdown file, then map to /content/<rel>
+  let publicUrl: string;
+  if (options.markdownFilePath) {
+    const resolved = resolve(options.markdownFilePath, "..", url);
+    const rel = relative(contentRoot, resolved).split(sep).join("/");
+    publicUrl = asset(`/content/${rel}`);
+  } else {
+    publicUrl = asset(url.startsWith("/") ? url : `/${url}`);
+  }
+
+  return `<img src="${publicUrl}" alt="${safeAlt}" />`;
+}
+
 function renderInline(text: string, options: RenderMarkdownOptions): string {
   // Pull out !video[caption](url) references before escaping so URLs stay intact.
   const videos: string[] = [];
-  const working = text.replace(/!video\[([^\]]*)\]\(([^)]+)\)/g, (_m, caption: string, url: string) => {
+  let working = text.replace(/!video\[([^\]]*)\]\(([^)]+)\)/g, (_m, caption: string, url: string) => {
     videos.push(renderVideo(url.trim(), caption.trim(), options));
     return `\u0000V${videos.length - 1}\u0000`;
+  });
+
+  // Pull out ![alt](url) image references before escaping so URLs stay intact
+  // and so the link regex below doesn't swallow them.
+  const images: string[] = [];
+  working = working.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt: string, url: string) => {
+    images.push(renderImage(url.trim(), alt.trim(), options));
+    return `\u0000I${images.length - 1}\u0000`;
   });
 
   let out = escapeHtml(working);
@@ -146,7 +185,8 @@ function renderInline(text: string, options: RenderMarkdownOptions): string {
     '<a href="$2">$1</a>'
   );
 
-  // Restore video embeds
+  // Restore images and video embeds
+  out = out.replace(/\u0000I(\d+)\u0000/g, (_m, idx: string) => images[Number(idx)]);
   out = out.replace(/\u0000V(\d+)\u0000/g, (_m, idx: string) => videos[Number(idx)]);
 
   return out;
